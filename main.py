@@ -4,6 +4,8 @@ import shutil
 
 # Constants
 path = './Students/'
+if os.path.exists(path) == False:
+    os.mkdir(path)
 students = os.listdir(path)
 
 def sep():
