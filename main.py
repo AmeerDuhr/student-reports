@@ -35,6 +35,8 @@ def show_students():
     if os.path.exists(gPath) == False:
         os.mkdir(gPath)
     students = os.listdir(gPath)
+    if len(students) == 0:
+        print("No students.")
     for student in students:
         print(str(id) + " " + student)
         id = id + 1
