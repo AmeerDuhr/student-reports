@@ -6,10 +6,14 @@ import shutil
 path = './Students/'
 if os.path.exists(path) == False:
     os.mkdir(path)
-students = os.listdir(path)
+grades = os.listdir(path)
 
 def sep():
     print("- - - - - - - - - - - - - - -")
+
+def gradePath():
+    whatGrade = input("[?] What Grade do you want to see? ")
+    return (path + whatGrade + '/')
 
 def show_report(rFile):
     with open(rFile, 'r') as file:
@@ -27,15 +31,20 @@ def show_report(rFile):
 
 def show_students():
     id = 1
+    gPath = gradePath()
+    if os.path.exists(gPath) == False:
+        os.mkdir(gPath)
+    students = os.listdir(gPath)
     for student in students:
         print(str(id) + " " + student)
         id = id + 1
+    return gPath
 
 def add_entry():
     new_subject = input("[?] Subject: ")
-    new_grade = input("[?] Mark: ")
+    new_mark = input("[?] Mark: ")
     new_full = input("[?] Full Mark: ")
-    return [new_subject, new_grade, new_full]
+    return [new_subject, new_mark, new_full]
 
 def entry_bool(rFile):
     add_entry_bool = input("[?] Do you want to add entries to it? [y/n] ")
@@ -48,11 +57,11 @@ def entry_bool(rFile):
         show_report(rFile)
         entry_bool(rFile)
 
-def enter_student_profile(sName):
-    if sName in students:
+def enter_student_profile(sName, gPath, studentsList):
+    if sName in studentsList:
         month = input("[?] Report's Month (number): ")
         year = input("[?] Report's Year (last two digits): ")
-        readingFile = path + sName + "/" + month + "-" + year + ".csv"
+        readingFile = gPath + sName + "/" + month + "-" + year + ".csv"
         if os.path.exists(readingFile) and os.stat(readingFile).st_size != 0:
             sep()
             show_report(readingFile)
@@ -68,7 +77,8 @@ def enter_student_profile(sName):
             entry_bool(readingFile)
 
 def main():
-    show_students()
+    gPath = show_students()
+    students = os.listdir(gPath)
     sep()
     print("[1] Enter\t[2] Add\n[0] Print")
     option = input("Choose an index: ")
@@ -81,7 +91,7 @@ def main():
         os.mkdir("./" + folder_name)
         copy_path = "./" + folder_name + "/"
         for student_folder in students:
-            readingFile = path + student_folder + "/" + month + "-" + year + ".csv"
+            readingFile = gPath + student_folder + "/" + month + "-" + year + ".csv"
             if os.path.exists(readingFile):
                 shutil.copy(readingFile, copy_path)
                 old_name = copy_path + month + "-" + year + ".csv"
@@ -93,13 +103,13 @@ def main():
         student_id = input("Student's ID: ")
         student_name = students[int(student_id) - 1]
         print("[!] Opened " + student_name + "'s profile...")
-        print("[!] Available files are: " + str(os.listdir(path + student_name)))
-        enter_student_profile(student_name)
+        print("[!] Available files are: " + str(os.listdir(gPath + student_name)))
+        enter_student_profile(student_name, gPath, students)
     # Add
     elif int(option) == 2:
         student_name = input("Student's Name: ")
         if student_name not in students:
-            os.mkdir(path + student_name) # Added Student Folder
+            os.mkdir(gPath + student_name) # Added Student Folder
             students.append(student_name)
             print("[+] Added " + student_name + " to the students' database!")
             sep()
